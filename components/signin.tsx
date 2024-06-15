@@ -1,6 +1,11 @@
-import { signIn } from "~/auth"
+import { auth, signIn } from "~/auth"
  
-export function SignIn() {
+export async function SignIn() {
+
+  const session = await auth()
+
+  if (session?.user) return <p>Logged in as: <span className="font-semibold">{session?.user.name}</span></p>
+
   return (
     <form
       action={async () => {
@@ -8,7 +13,7 @@ export function SignIn() {
         await signIn("discord")
       }}
     >
-      <button type="submit">Signin with Discord</button>
+      <button type="submit">Login</button>
     </form>
   )
 } 
