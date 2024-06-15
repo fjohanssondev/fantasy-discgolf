@@ -1,6 +1,6 @@
 import Leaderboard from "~/components/leaderboard";
-import { SignIn } from "~/components/signin";
 import { db } from "~/lib/db";
+import { constructLeaderboard } from "~/lib/utils";
 
 export interface Player {
   name: string
@@ -11,21 +11,25 @@ export default async function Home() {
 
   const users = await db.user.findMany({
     include: {
-      userTeam: true
+      userTeam: {
+        include: {
+          captain: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
     }
   })
 
-  const leaderboard = users.map(player => {
-    return {
-      name: player.name,
-      points: player.userTeam.reduce((acc, curr) => acc + curr.points, 0)
-    }
-  }).sort((a, b) => b.points - a.points)
+  const leaderboard = constructLeaderboard(users)
+
+  console.log(leaderboard[1])
 
   return (
-    <main className="mx-auto max-w-screen-lg">
+    <section>
      <Leaderboard leaderboard={leaderboard} />
-     <SignIn />
-    </main>
+    </section>
   );
 }
