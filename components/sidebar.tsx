@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { db } from "~/lib/db"
 
 export default async function Sidebar(){
@@ -6,9 +7,12 @@ export default async function Sidebar(){
 
   return (
     <nav>
+      <span className="text-xs font-medium">Events</span>
       <ul>
-        {competitions.map(competition => (
-          <li>{competition.name}</li>
+        {competitions.map(({ name, id, eventId }) => (
+          <li key={id}>
+            <Link className="text-sm" href={`/event/${eventId}`}>{name}</Link>
+          </li>
         ))}
       </ul>
     </nav>
