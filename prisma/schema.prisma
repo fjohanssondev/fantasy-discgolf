@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -77,19 +76,29 @@ model UserTeam {
   @@unique([userId, competitionId])
 }
 
+enum SEASON {
+  SEASON_2024
+  SEASON_2025
+  SEASON_2026
+  SEASON_2027
+}
+
 model Season {
   id           String        @id @default(cuid())
-  name         String
+  season       SEASON
   competitions Competition[]
 }
 
 model Competition {
-  id       String     @id @default(cuid())
-  name     String
-  deadline DateTime
-  season   Season     @relation(fields: [seasonId], references: [id])
-  seasonId String
-  userTeam UserTeam[]
+  id        String     @id @default(cuid())
+  name      String
+  startDate DateTime?
+  endDate   DateTime?
+  deadline  DateTime?
+  eventId   Int
+  season    Season     @relation(fields: [seasonId], references: [id])
+  seasonId  String
+  userTeam  UserTeam[]
 }
 
 model Player {
