@@ -1,4 +1,4 @@
-import { Player, UserTeam } from "@prisma/client"
+import { UserTeam } from "@prisma/client"
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ export default function Leaderboard({ leaderboard }: Leaderboard){
         <TableRow>
           <TableHead className="w-[100px]">Placering</TableHead>
           <TableHead>Namn</TableHead>
+          <TableHead>Kapten</TableHead>
           <TableHead className="text-right">Poäng</TableHead>
         </TableRow>
       </TableHeader>
@@ -29,6 +30,7 @@ export default function Leaderboard({ leaderboard }: Leaderboard){
           <TableRow key={player.id}>
             <TableCell className="font-medium">{idx + 1}</TableCell>
             <TableCell>{player.name}</TableCell>
+            <TableCell></TableCell>
             <TableCell className="text-right">{player.points}</TableCell>
           </TableRow>
         ))}
