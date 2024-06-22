@@ -101,3 +101,21 @@ export const handleJoinLeague = async (formData: FormData) => {
 
   redirect(`/league/${league.id}`)
 }
+
+export const handleCreateTeam = async (formData: FormData) => {
+  const session = await auth()
+  const name = formData.get('name') as string
+
+  const team = await db.team.create({
+    data: {
+      name,
+      user: {
+        connect: {
+          id: session?.user?.id
+        }
+      }
+    }
+  })
+
+  redirect(`/team/${team.id}`)
+}
