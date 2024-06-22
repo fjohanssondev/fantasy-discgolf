@@ -1,6 +1,6 @@
-import Leaderboard from "~/components/leaderboard";
+import Link from "next/link";
+import { auth } from "~/auth";
 import { db } from "~/lib/db";
-import { constructLeaderboard } from "~/lib/utils";
 
 export interface Player {
   name: string
@@ -8,28 +8,18 @@ export interface Player {
 }
 
 export default async function Home() {
-
-  const users = await db.user.findMany({
-    include: {
-      userTeam: {
-        include: {
-          captain: {
-            select: {
-              name: true
-            }
-          }
-        }
-      }
+  const session = await auth()
+  
+  const my_team = await db.team.findFirst({
+    where: {
+      userId: session?.user?.id
     }
   })
 
-  const leaderboard = constructLeaderboard(users)
-
-  console.log(leaderboard[1])
-
   return (
     <section>
-     <Leaderboard leaderboard={leaderboard} />
+      <h1 className="mb-4">Dashboard</h1>
+      {!my_team && <section className="flex justify-center"><Link href="/team/create">Create Team</Link></section>}
     </section>
   );
 }
