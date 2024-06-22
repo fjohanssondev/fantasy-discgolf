@@ -46,7 +46,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  userTeam UserTeam[]
+  teams Team[]
 
   @@map("users")
 }
@@ -60,20 +60,34 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-model UserTeam {
-  id            String      @id @default(cuid())
-  user          User        @relation(fields: [userId], references: [id])
+model Team {
+  id            String     @id @default(cuid())
+  user          User       @relation(fields: [userId], references: [id])
   userId        String
+  players       Player[]   @relation("PlayerSelection")
+  captain       Player?    @relation("Captain", fields: [captainId], references: [id])
+  captainId     String?
+  viceCaptain   Player?    @relation("ViceCaptain", fields: [viceCaptainId], references: [id])
+  viceCaptainId String?
+  points        Int        @default(0)
+  budget        Int        @default(1000000)
+  transfers     Transfer[]
+  leagues       League[]
+
+  @@unique([userId])
+}
+
+model Transfer {
+  id            String      @id @default(cuid())
+  team          Team        @relation(fields: [teamId], references: [id])
+  teamId        String
   competition   Competition @relation(fields: [competitionId], references: [id])
   competitionId String
-  players       Player[]    @relation("PlayerSelection")
-  captain       Player?     @relation("Captain", fields: [captainId], references: [id])
-  captainId     String?
-  viceCaptain   Player?     @relation("ViceCaptain", fields: [viceCaptainId], references: [id])
-  viceCaptainId String?
-  points        Int         @default(0)
-
-  @@unique([userId, competitionId])
+  playerIn      Player      @relation("PlayerIn", fields: [playerInId], references: [id])
+  playerInId    String
+  playerOut     Player      @relation("PlayerOut", fields: [playerOutId], references: [id])
+  playerOutId   String
+  date          DateTime
 }
 
 enum SEASON {
@@ -83,10 +97,27 @@ enum SEASON {
   SEASON_2027
 }
 
+enum Manufacturer {
+  DISCMANIA
+  INNOVA
+  LATITUDE_64
+  MVP
+  PRODIGY
+  WESTSIDE
+  DISCRAFT
+  DYNAMIC_DISCS
+  AXIOM_DISCS
+  KASTAPLAST
+  LONESTAR_DISC
+  GATEWAY
+  TEFAT
+}
+
 model Season {
   id           String        @id @default(cuid())
   season       SEASON
   competitions Competition[]
+  leagues      League[]
 }
 
 model Competition {
@@ -98,13 +129,30 @@ model Competition {
   eventId   Int
   season    Season     @relation(fields: [seasonId], references: [id])
   seasonId  String
-  userTeam  UserTeam[]
+  transfers Transfer[]
+  leagues   League[]
+}
+
+model League {
+  id           String        @id @default(cuid())
+  name         String
+  code         String        @unique @default(nanoid(6))
+  season       Season        @relation(fields: [seasonId], references: [id])
+  seasonId     String
+  competitions Competition[]
+  teams        Team[]
 }
 
 model Player {
-  id            String     @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String
-  userTeam      UserTeam[] @relation("PlayerSelection")
-  captainOf     UserTeam[] @relation("Captain")
-  viceCaptainOf UserTeam[] @relation("ViceCaptain")
+  pdgaNumber    Int
+  rating        Int
+  price         Int           @default(0)
+  sponsor       Manufacturer?
+  teams         Team[]        @relation("PlayerSelection")
+  captainOf     Team[]        @relation("Captain")
+  viceCaptainOf Team[]        @relation("ViceCaptain")
+  transfersIn   Transfer[]    @relation("PlayerIn")
+  transfersOut  Transfer[]    @relation("PlayerOut")
 }
