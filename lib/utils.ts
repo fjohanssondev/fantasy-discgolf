@@ -46,6 +46,18 @@ export async function getTeamById(id: string) {
   return await db.team.findFirst({
     where: {
       id
+    },
+    include: {
+      players: true,
+      user: {
+        select: {
+          name: true
+        }
+      }
     }
   })
+}
+
+export async function getPlayers() {
+  return await db.player.findMany()
 }
