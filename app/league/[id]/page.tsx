@@ -28,7 +28,7 @@ export default async function League({ params }: { params: { id: string } }) {
   return (
     <section>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{league.name}'s League</h1>
+        <h1 className="text-xl font-semibold">{league.name}&apos;s League</h1>
         {league.creatorId === session?.user?.id && <ShareLeagueCode code={league.code} />}
       </div>
       <div className="mt-12">
