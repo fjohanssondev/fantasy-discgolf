@@ -58,7 +58,7 @@ export default async function RootLayout({
                   <Link className="bg-primary text-sm text-white px-4 py-2" href="/schedule">Schedule</Link>
                 </li>
                 <li>
-                  <Link className="bg-primary text-sm text-white px-4 py-2" href="/rules">Rules</Link>
+                  <Link className="bg-primary text-sm text-white px-4 py-2" href="/help">Help</Link>
                 </li>
               </ul>
             </nav>

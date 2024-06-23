@@ -1,13 +1,8 @@
-import Link from "next/link";
 import { auth } from "~/auth";
 import { db } from "~/lib/db";
+import CreateTeam from "~/components/create_team";
 
-export interface Player {
-  name: string
-  points: number
-}
-
-export default async function Home() {
+export default async function Dashboard() {
   const session = await auth()
   
   const my_team = await db.team.findFirst({
@@ -19,7 +14,7 @@ export default async function Home() {
   return (
     <section>
       <h1 className="mb-4">Dashboard</h1>
-      {!my_team && <section className="flex justify-center"><Link href="/team/create">Create Team</Link></section>}
+      {!my_team && <section className="flex justify-center"><CreateTeam /></section>}
     </section>
   );
 }
