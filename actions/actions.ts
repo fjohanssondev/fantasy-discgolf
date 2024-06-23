@@ -1,5 +1,6 @@
 'use server'
 
+import { Player } from "@prisma/client"
 import { redirect } from "next/navigation"
 import { auth } from "~/auth"
 import { db } from "~/lib/db"
@@ -118,4 +119,44 @@ export const handleCreateTeam = async (formData: FormData) => {
   })
 
   redirect(`/team/${team.id}`)
+}
+
+export const handleSubmitTeam = async (data: Player[], budget: number) => {
+  const session = await auth()
+  
+  const team = await db.team.findFirst({
+    where: {
+      userId: session?.user?.id
+    }
+  })
+
+  if (team?.userId !== session?.user?.id) {
+    console.log("User does not own this team")
+    return
+  }
+
+  const players = await db.player.findMany({
+    where: {
+      id: {
+        in: data.map(player => player.id)
+      }
+    }
+  })
+
+  if(!team){
+    console.log("Team does not exist")
+    return
+  }
+
+  await db.team.update({
+    where: {
+      id: team.id
+    },
+    data: {
+      players: {
+        connect: players.map(player => ({ id: player.id }))
+      },
+      budget: budget
+    }
+  })
 }
