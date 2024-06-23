@@ -35,7 +35,7 @@ export default function Leaderboard({ leaderboard }: Leaderboard){
           <TableRow key={team.id}>
             <TableCell className="font-medium">{idx + 1}</TableCell>
             <TableCell>{team.name}</TableCell>
-            <TableCell><Link className="hover:underline" href={`/user/${team.user.id}`}>{team.user.name}</Link></TableCell>
+            <TableCell><Link className="hover:underline" href={`/team/${team.id}`}>{team.user.name}</Link></TableCell>
             <TableCell className="text-right">{team.points}</TableCell>
           </TableRow>
         ))}
